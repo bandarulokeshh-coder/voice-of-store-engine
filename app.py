@@ -18,6 +18,7 @@ from src.preprocessing import infer_required_columns, standardize_feedback_frame
 from src.routing import get_department_for_issue, get_suggested_action, load_taxonomy
 from src.storage import initialise_database, load_feedback_frame, upsert_feedback_frame
 from src.synthetic_data import CSV_PATH, generate_synthetic_dataset, incident_profiles_dataframe, load_or_create_synthetic_dataset
+from src.competition_data import load_competition_dataset
 from src.weekly_report import (
     build_weekly_regional_report,
     export_weekly_report_csv,
@@ -122,6 +123,16 @@ def load_demo_bundle() -> pd.DataFrame:
     return df
 
 
+def load_competition_bundle() -> pd.DataFrame:
+    df = load_competition_dataset()
+    if "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    if "week_start" not in df.columns and "timestamp" in df.columns:
+        df["week_start"] = df["timestamp"].dt.to_period("W-MON").dt.start_time
+    initialise_database(df)
+    return df
+
+
 @st.cache_resource(show_spinner=False)
 def get_analyzer(df_signature: str) -> FeedbackAnalyzer:
     analyzer = default_analyzer()
@@ -184,9 +195,9 @@ def _as_bool_series(series: pd.Series) -> pd.Series:
 
 def prepare_active_dataframe() -> pd.DataFrame:
     if "active_dataframe" not in st.session_state:
-        demo = load_demo_bundle()
-        st.session_state["active_dataframe"] = demo
-        st.session_state["active_source"] = "Synthetic Demonstration Data"
+        competition = load_competition_bundle()
+        st.session_state["active_dataframe"] = competition
+        st.session_state["active_source"] = "Competition Dataset"
     return st.session_state["active_dataframe"].copy()
 
 
@@ -839,11 +850,20 @@ def render_settings(df: pd.DataFrame) -> pd.DataFrame:
             st.success("Uploaded dataset loaded successfully.")
             st.rerun()
 
-    st.markdown("#### Demo Mode")
-    if st.button("Reset to Synthetic Demonstration Data"):
-        demo = load_demo_bundle()
-        set_active_dataframe(demo, "Synthetic Demonstration Data")
-        st.success("Synthetic demo dataset restored.")
+    st.markdown("#### Dataset Sources")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Load Competition Dataset"):
+            competition = load_competition_bundle()
+            set_active_dataframe(competition, "Competition Dataset")
+            st.success("Competition dataset loaded successfully.")
+            st.rerun()
+    with col2:
+        if st.button("Reset to Synthetic Demonstration Data"):
+            demo = load_demo_bundle()
+            set_active_dataframe(demo, "Synthetic Demonstration Data")
+            st.success("Synthetic demo dataset restored.")
+            st.rerun()
         st.rerun()
 
     st.markdown("#### Local Storage")

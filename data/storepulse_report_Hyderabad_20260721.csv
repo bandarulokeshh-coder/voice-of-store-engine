@@ -1,0 +1,6 @@
+Region,Reporting Week,Issue Type,Severity,Trend,Affected Stores,Owning Department,Complaints,Normalized Rate,Priority Score,Suggested Action,Evidence Quotes
+Hyderabad,2026-07-21,Harassment,HIGH,↑ 2.00x,1,HR,1,0.5,100.0,Open a confidential HR escalation immediately.,['Great shopping experience and helpful staff.']
+Hyderabad,2026-07-21,Refrigeration Failure,HIGH,↑ 2.00x,1,Store Operations,1,1.0,100.0,Inspect refrigeration equipment and isolate affected products.,['The freezer is not working and milk packets are spoiling.']
+Hyderabad,2026-07-21,Customer Praise,LOW,↑ 2.00x,1,Customer Experience,1,1.0,65.0,Review the issue with the owning team.,['Staff were polite and quick to assist.']
+Hyderabad,2026-07-21,Inventory Mismatch,LOW,↑ 2.00x,1,Supply Chain,1,0.5,65.0,Reconcile inventory counts and investigate shrinkage.,['Great shopping experience and helpful staff.']
+Hyderabad,2026-07-21,Packaging Damage,LOW,↑ 2.00x,1,Supply Chain,1,1.0,65.0,Isolate damaged stock and inform the vendor.,['Great shopping experience and helpful staff.']
