@@ -1,6 +1,0 @@
-Region,Reporting Week,Issue Type,Severity,Trend,Affected Stores,Owning Department,Complaints,Normalized Rate,Priority Score,Suggested Action,Evidence Quotes
-Visakhapatnam,2026-07-21,Hygiene,HIGH,↑ 3.00x,2,Store Operations,2,0.4167,100.0,Trigger sanitation cleanup and perform a store inspection.,"['Washroom ganda hai aur floor pe spill pada hai.', 'Store bahut dirty hai, smell aa rahi hai aur cleaning nahi hui.']"
-Visakhapatnam,2026-07-21,App Payment Failure,MEDIUM,↑ 2.00x,1,Digital,1,0.3333,92.0,Inspect payment gateway logs and app checkout flow.,['UPI payment work avvatledu.']
-Visakhapatnam,2026-07-21,Checkout Delay,MEDIUM,↑ 3.00x,2,Store Operations,2,0.75,92.0,Add checkout support and monitor peak-hour staffing.,"['Checkout line khup mothi aahe.', 'Checkout lines are too long during evening peak hours.']"
-Visakhapatnam,2026-07-21,Equipment Failure,LOW,↑ 2.00x,1,Store Operations,1,0.3333,65.0,Dispatch maintenance and verify store equipment status.,"['Thanks, the store was clean and well organized.']"
-Visakhapatnam,2026-07-21,Packaging Damage,LOW,↑ 2.00x,1,Supply Chain,1,0.5,65.0,Isolate damaged stock and inform the vendor.,['Staff were polite and quick to assist.']

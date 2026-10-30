@@ -1,9 +1,11 @@
-from src.classifier import FeedbackAnalyzer
-from src.policy_engine import evaluate_policy
+from classifier import FeedbackAnalyzer
+from policy_engine import evaluate_policy
 
 
 def test_safety_escalation_allergen_label_is_high():
-    decision = evaluate_policy("Incorrect allergen label on packaged food.", "Allergen Label Error")
+    decision = evaluate_policy(
+        "Incorrect allergen label on packaged food.", "Allergen Label Error"
+    )
     assert decision.severity == "HIGH"
     assert decision.department == "Merchandising"
     assert decision.actionable is True

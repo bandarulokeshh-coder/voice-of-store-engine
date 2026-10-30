@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
-from typing import Iterable
 
 import pandas as pd
 
@@ -43,8 +42,9 @@ def connect(db_path: str | Path = DB_PATH) -> sqlite3.Connection:
     return connection
 
 
-
-def initialise_database(df: pd.DataFrame | None = None, db_path: str | Path = DB_PATH) -> Path:
+def initialise_database(
+    df: pd.DataFrame | None = None, db_path: str | Path = DB_PATH
+) -> Path:
     with connect(db_path) as connection:
         connection.executescript(SCHEMA_SQL)
         if df is not None and not df.empty:
@@ -52,8 +52,11 @@ def initialise_database(df: pd.DataFrame | None = None, db_path: str | Path = DB
     return Path(db_path)
 
 
-
-def upsert_feedback_frame(df: pd.DataFrame, connection: sqlite3.Connection | None = None, db_path: str | Path = DB_PATH) -> None:
+def upsert_feedback_frame(
+    df: pd.DataFrame,
+    connection: sqlite3.Connection | None = None,
+    db_path: str | Path = DB_PATH,
+) -> None:
     frame = df.copy()
     if frame.empty:
         return
@@ -65,7 +68,9 @@ def upsert_feedback_frame(df: pd.DataFrame, connection: sqlite3.Connection | Non
         frame = frame.copy()
         for column in ["timestamp", "week_start"]:
             if column in frame.columns:
-                frame[column] = pd.to_datetime(frame[column], errors="coerce").astype(str)
+                frame[column] = pd.to_datetime(frame[column], errors="coerce").astype(
+                    str
+                )
         for column in ["actionable", "known_incident_flag"]:
             if column in frame.columns:
                 frame[column] = frame[column].astype(int)
@@ -75,7 +80,6 @@ def upsert_feedback_frame(df: pd.DataFrame, connection: sqlite3.Connection | Non
             connection.close()
 
 
-
 def load_feedback_frame(db_path: str | Path = DB_PATH) -> pd.DataFrame:
     path = Path(db_path)
     if not path.exists():
@@ -83,7 +87,7 @@ def load_feedback_frame(db_path: str | Path = DB_PATH) -> pd.DataFrame:
     with connect(db_path) as connection:
         try:
             frame = pd.read_sql_query("SELECT * FROM feedback", connection)
-        except Exception:
+        except Exception:  # noqa: BLE001
             return pd.DataFrame()
     if not frame.empty:
         for column in ["timestamp", "week_start"]:

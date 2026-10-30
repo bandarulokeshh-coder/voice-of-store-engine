@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from datetime import datetime
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -31,7 +30,7 @@ COMMON_REPLACEMENTS = {
     "empty rack": "stock shortage",
     "packet bad": "damaged package",
     "freezer work avvatledu": "freezer not working",
-    "customer complaint": "feedback"
+    "customer complaint": "feedback",
 }
 
 NORMALIZATION_REPLACEMENTS = {
@@ -59,7 +58,9 @@ def normalize_text(value: object) -> str:
     return text
 
 
-def safe_parse_date(value: object, default: pd.Timestamp | None = None) -> pd.Timestamp | pd.NaT:
+def safe_parse_date(
+    value: object, default: pd.Timestamp | None = None
+) -> pd.Timestamp | pd.NaT:
     default = default or pd.NaT
     if value is None or value == "":
         return default
@@ -68,7 +69,7 @@ def safe_parse_date(value: object, default: pd.Timestamp | None = None) -> pd.Ti
         if pd.isna(parsed):
             return default
         return parsed.tz_localize(None) if getattr(parsed, "tzinfo", None) else parsed
-    except Exception:
+    except Exception:  # noqa: BLE001
         return default
 
 

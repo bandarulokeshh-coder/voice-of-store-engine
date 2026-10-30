@@ -5,9 +5,9 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from .preprocessing import normalize_text
+from preprocessing import normalize_text
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[0]
 TAXONOMY_PATH = ROOT / "config" / "issue_taxonomy.json"
 
 
@@ -19,7 +19,9 @@ def load_taxonomy(path: str | Path = TAXONOMY_PATH) -> dict[str, Any]:
 
 
 @lru_cache(maxsize=512)
-def get_department_for_issue(issue_category: str, text: str | None = None, path: str | Path = TAXONOMY_PATH) -> str:
+def get_department_for_issue(
+    issue_category: str, text: str | None = None, path: str | Path = TAXONOMY_PATH
+) -> str:
     taxonomy = load_taxonomy(path)
     default_department = taxonomy.get("default_department", "Store Operations")
     category = normalize_text(issue_category)
@@ -44,7 +46,9 @@ def get_suggested_action(issue_category: str, path: str | Path = TAXONOMY_PATH) 
     category = normalize_text(issue_category)
     for item in taxonomy.get("categories", []):
         if normalize_text(item.get("issue_category", "")) == category:
-            return item.get("suggested_action", "Review the issue with the owning team.")
+            return item.get(
+                "suggested_action", "Review the issue with the owning team."
+            )
     return "Review the issue with the owning team."
 
 
@@ -63,5 +67,7 @@ def category_keywords(path: str | Path = TAXONOMY_PATH) -> dict[str, list[str]]:
     taxonomy = load_taxonomy(path)
     mapping: dict[str, list[str]] = {}
     for item in taxonomy.get("categories", []):
-        mapping[item["issue_category"]] = [normalize_text(keyword) for keyword in item.get("keywords", [])]
+        mapping[item["issue_category"]] = [
+            normalize_text(keyword) for keyword in item.get("keywords", [])
+        ]
     return mapping

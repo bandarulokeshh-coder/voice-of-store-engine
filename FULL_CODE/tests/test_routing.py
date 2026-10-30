@@ -1,4 +1,4 @@
-from src.routing import get_department_for_issue
+from routing import get_department_for_issue
 
 
 def test_payment_failure_routes_to_digital():

@@ -7,7 +7,7 @@ from typing import Any
 
 import pandas as pd
 
-from .preprocessing import normalize_text, compact_text
+from preprocessing import compact_text, normalize_text
 
 
 @dataclass(slots=True)
@@ -69,10 +69,15 @@ def _similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
 
-def _candidate_match(row_a: pd.Series, row_b: pd.Series, time_window_hours: int) -> bool:
+def _candidate_match(
+    row_a: pd.Series, row_b: pd.Series, time_window_hours: int
+) -> bool:
     if row_a["store_id"] != row_b["store_id"]:
         return False
-    delta_hours = abs((pd.Timestamp(row_a["timestamp"]) - pd.Timestamp(row_b["timestamp"])) / pd.Timedelta(hours=1))
+    delta_hours = abs(
+        (pd.Timestamp(row_a["timestamp"]) - pd.Timestamp(row_b["timestamp"]))
+        / pd.Timedelta(hours=1)
+    )
     return delta_hours <= time_window_hours
 
 
@@ -101,7 +106,9 @@ def detect_duplicate_groups(
     frame = df.copy()
     frame["timestamp"] = pd.to_datetime(frame["timestamp"], errors="coerce")
     frame = frame.loc[~frame["timestamp"].isna()].copy()
-    frame["normalized_text"] = frame["feedback_text"].fillna("").astype(str).map(normalize_text)
+    frame["normalized_text"] = (
+        frame["feedback_text"].fillna("").astype(str).map(normalize_text)
+    )
     frame = frame.loc[frame["normalized_text"].str.len() > 0].copy()
     frame = frame.sort_values(["store_id", "timestamp"]).reset_index(drop=True)
     if frame.empty:
@@ -115,12 +122,22 @@ def detect_duplicate_groups(
             row_a = frame.loc[idx_a]
             for idx_b in indices[i + 1 :]:
                 row_b = frame.loc[idx_b]
-                if not _candidate_match(row_a, row_b, time_window_hours=time_window_hours):
+                if not _candidate_match(
+                    row_a, row_b, time_window_hours=time_window_hours
+                ):
                     continue
-                text_score = _similarity(row_a["normalized_text"], row_b["normalized_text"])
-                category_match = normalize_text(row_a.get("issue_category", "")) == normalize_text(row_b.get("issue_category", ""))
-                same_channel = normalize_text(row_a.get("channel", "")) == normalize_text(row_b.get("channel", ""))
-                if text_score >= similarity_threshold and (category_match or same_channel or text_score >= 0.95):
+                text_score = _similarity(
+                    row_a["normalized_text"], row_b["normalized_text"]
+                )
+                category_match = normalize_text(
+                    row_a.get("issue_category", "")
+                ) == normalize_text(row_b.get("issue_category", ""))
+                same_channel = normalize_text(
+                    row_a.get("channel", "")
+                ) == normalize_text(row_b.get("channel", ""))
+                if text_score >= similarity_threshold and (
+                    category_match or same_channel or text_score >= 0.95
+                ):
                     uf.union(idx_a, idx_b)
 
     clusters: defaultdict[int, list[int]] = defaultdict(list)
@@ -132,13 +149,18 @@ def detect_duplicate_groups(
         if len(indices) < 2:
             continue
         cluster = frame.loc[indices].sort_values("timestamp")
-        channels = sorted({str(x) for x in cluster["channel"].fillna("Unknown").tolist()})
+        channels = sorted(
+            {str(x) for x in cluster["channel"].fillna("Unknown").tolist()}
+        )
         store_id = str(cluster.iloc[0]["store_id"])
         issue_category = str(cluster.iloc[0].get("issue_category", "Unknown"))
         first_seen = pd.Timestamp(cluster["timestamp"].min())
         last_seen = pd.Timestamp(cluster["timestamp"].max())
         representative_text = compact_text(cluster.iloc[0]["feedback_text"], 150)
-        evidence_texts = [compact_text(text, 150) for text in cluster["feedback_text"].head(4).tolist()]
+        evidence_texts = [
+            compact_text(text, 150)
+            for text in cluster["feedback_text"].head(4).tolist()
+        ]
         groups.append(
             DuplicateGroup(
                 group_id=f"DUP-{root:05d}",
@@ -169,11 +191,17 @@ def detect_duplicate_groups(
             ]
         )
 
-    return pd.DataFrame(groups).sort_values(["record_count", "last_seen"], ascending=[False, False]).reset_index(drop=True)
+    return (
+        pd.DataFrame(groups)
+        .sort_values(["record_count", "last_seen"], ascending=[False, False])
+        .reset_index(drop=True)
+    )
 
 
 def duplicate_summary_message(groups_df: pd.DataFrame) -> str:
     if groups_df.empty:
         return "No probable duplicate incident groups were found."
     max_channels = max(len(channels) for channels in groups_df["channels"])
-    return f"Potential duplicate incident reported across up to {max_channels} channels."
+    return (
+        f"Potential duplicate incident reported across up to {max_channels} channels."
+    )

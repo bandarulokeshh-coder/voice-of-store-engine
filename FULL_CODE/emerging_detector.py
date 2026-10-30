@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
 
-from .preprocessing import compact_text, normalize_text
+from preprocessing import compact_text
 
 
 @dataclass(slots=True)
@@ -63,14 +62,28 @@ def build_weekly_store_issue_metrics(df: pd.DataFrame) -> pd.DataFrame:
     frame = frame.copy()
     frame["feedback_text"] = frame["feedback_text"].fillna("").astype(str)
     group_cols = ["store_id", "region", "issue_category", "week_start"]
-    weekly = frame.groupby(group_cols, dropna=False).agg(
-        issue_count=("feedback_text", "size"),
-        total_store_feedback=("feedback_text", lambda s: int(len(s))),
-    ).reset_index()
-    total_by_store_week = frame.groupby(["store_id", "region", "week_start"]).size().reset_index(name="store_week_total")
-    weekly = weekly.merge(total_by_store_week, on=["store_id", "region", "week_start"], how="left")
-    weekly["normalized_rate"] = weekly["issue_count"] / weekly["store_week_total"].clip(lower=1)
-    return weekly.sort_values(["store_id", "issue_category", "week_start"]).reset_index(drop=True)
+    weekly = (
+        frame.groupby(group_cols, dropna=False)
+        .agg(
+            issue_count=("feedback_text", "size"),
+            total_store_feedback=("feedback_text", lambda s: len(s)),
+        )
+        .reset_index()
+    )
+    total_by_store_week = (
+        frame.groupby(["store_id", "region", "week_start"])
+        .size()
+        .reset_index(name="store_week_total")
+    )
+    weekly = weekly.merge(
+        total_by_store_week, on=["store_id", "region", "week_start"], how="left"
+    )
+    weekly["normalized_rate"] = weekly["issue_count"] / weekly["store_week_total"].clip(
+        lower=1
+    )
+    return weekly.sort_values(["store_id", "issue_category", "week_start"]).reset_index(
+        drop=True
+    )
 
 
 def _robust_baseline(history: np.ndarray) -> tuple[float, float]:
@@ -146,7 +159,9 @@ def detect_emerging_incidents(
     weekly = build_weekly_store_issue_metrics(frame)
     alerts: list[dict] = []
 
-    for (store_id, issue_category), group in weekly.groupby(["store_id", "issue_category"]):
+    for (store_id, issue_category), group in weekly.groupby(
+        ["store_id", "issue_category"]
+    ):
         group = group.sort_values("week_start")
         if len(group) < 2:
             continue
@@ -155,8 +170,12 @@ def detect_emerging_incidents(
             history = group.iloc[max(0, idx - lookback_weeks) : idx]
             history_rates = history["normalized_rate"].astype(float).to_numpy()
             baseline, mad = _robust_baseline(history_rates)
-            growth_indicator = _safe_growth(float(current_row["normalized_rate"]), baseline)
-            spike_score = _safe_spike_score(float(current_row["normalized_rate"]), baseline, mad)
+            growth_indicator = _safe_growth(
+                float(current_row["normalized_rate"]), baseline
+            )
+            spike_score = _safe_spike_score(
+                float(current_row["normalized_rate"]), baseline, mad
+            )
             current_count = int(current_row["issue_count"])
             current_rate = float(current_row["normalized_rate"])
             total_store_feedback = int(current_row["store_week_total"])
@@ -169,7 +188,11 @@ def detect_emerging_incidents(
             absolute_jump = current_rate - baseline
             exceeds_growth = growth_indicator >= growth_threshold
             exceeds_spike = spike_score >= spike_threshold
-            early_low_volume = zero_baseline and current_count >= minimum_support and absolute_jump > 0.015
+            early_low_volume = (
+                zero_baseline
+                and current_count >= minimum_support
+                and absolute_jump > 0.015
+            )
 
             if not (exceeds_growth or exceeds_spike or early_low_volume):
                 continue
@@ -181,8 +204,18 @@ def detect_emerging_incidents(
             ]
             quotes = _supporting_quotes(current_group, limit=3)
             region = str(current_row.get("region", "Unknown"))
-            severity = str(current_group["severity"].mode().iloc[0]) if "severity" in current_group.columns and not current_group["severity"].dropna().empty else "MEDIUM"
-            department = str(current_group["department"].mode().iloc[0]) if "department" in current_group.columns and not current_group["department"].dropna().empty else "Store Operations"
+            severity = (
+                str(current_group["severity"].mode().iloc[0])
+                if "severity" in current_group.columns
+                and not current_group["severity"].dropna().empty
+                else "MEDIUM"
+            )
+            department = (
+                str(current_group["department"].mode().iloc[0])
+                if "department" in current_group.columns
+                and not current_group["department"].dropna().empty
+                else "Store Operations"
+            )
             explanation = (
                 f"{issue_category} complaints at {store_id} increased relative to the previous {len(history)} weeks. "
                 f"Current rate {current_rate:.3f} vs baseline {baseline:.3f}; growth {growth_indicator:.2f}x."
@@ -230,14 +263,25 @@ def detect_emerging_incidents(
             ]
         )
 
-    alerts_df = pd.DataFrame(alerts).sort_values(["alert_date", "growth_indicator", "current_count"], ascending=[False, False, False]).reset_index(drop=True)
+    alerts_df = (
+        pd.DataFrame(alerts)
+        .sort_values(
+            ["alert_date", "growth_indicator", "current_count"],
+            ascending=[False, False, False],
+        )
+        .reset_index(drop=True)
+    )
     return alerts_df
 
 
-def build_trend_window(df: pd.DataFrame, store_id: str, issue_category: str, weeks: int = 8) -> pd.DataFrame:
+def build_trend_window(
+    df: pd.DataFrame, store_id: str, issue_category: str, weeks: int = 8
+) -> pd.DataFrame:
     frame = ensure_week_start(df)
     weekly = build_weekly_store_issue_metrics(frame)
-    subset = weekly[(weekly["store_id"] == store_id) & (weekly["issue_category"] == issue_category)].copy()
+    subset = weekly[
+        (weekly["store_id"] == store_id) & (weekly["issue_category"] == issue_category)
+    ].copy()
     if subset.empty:
         return subset
     subset = subset.sort_values("week_start")
@@ -249,7 +293,8 @@ def summarize_alerts(alerts_df: pd.DataFrame) -> pd.DataFrame:
         return alerts_df
     result = alerts_df.copy()
     result["alert_label"] = np.where(
-        result["severity"].astype(str).str.upper().eq("HIGH") | (result["growth_indicator"] >= 3),
+        result["severity"].astype(str).str.upper().eq("HIGH")
+        | (result["growth_indicator"] >= 3),
         "HIGH PRIORITY",
         "WATCHLIST",
     )

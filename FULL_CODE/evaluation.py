@@ -13,9 +13,9 @@ from sklearn.metrics import (
     recall_score,
 )
 
-from .classifier import FeedbackAnalyzer
-from .emerging_detector import detect_emerging_incidents
-from .synthetic_data import incident_profiles_dataframe
+from classifier import FeedbackAnalyzer
+from emerging_detector import detect_emerging_incidents
+from synthetic_data import incident_profiles_dataframe
 
 
 @dataclass(slots=True)
@@ -42,15 +42,36 @@ class ClassificationMetrics:
         }
 
 
-
-def compute_classification_metrics(y_true: list[str], y_pred: list[str]) -> ClassificationMetrics:
+def compute_classification_metrics(
+    y_true: list[str], y_pred: list[str]
+) -> ClassificationMetrics:
     labels = sorted(set(y_true) | set(y_pred))
     accuracy = float(accuracy_score(y_true, y_pred)) if y_true else 0.0
-    macro_f1 = float(f1_score(y_true, y_pred, average="macro", zero_division=0)) if y_true else 0.0
-    weighted_f1 = float(f1_score(y_true, y_pred, average="weighted", zero_division=0)) if y_true else 0.0
-    precision = float(precision_score(y_true, y_pred, average="weighted", zero_division=0)) if y_true else 0.0
-    recall = float(recall_score(y_true, y_pred, average="weighted", zero_division=0)) if y_true else 0.0
-    matrix = confusion_matrix(y_true, y_pred, labels=labels) if y_true else np.zeros((0, 0), dtype=int)
+    macro_f1 = (
+        float(f1_score(y_true, y_pred, average="macro", zero_division=0))
+        if y_true
+        else 0.0
+    )
+    weighted_f1 = (
+        float(f1_score(y_true, y_pred, average="weighted", zero_division=0))
+        if y_true
+        else 0.0
+    )
+    precision = (
+        float(precision_score(y_true, y_pred, average="weighted", zero_division=0))
+        if y_true
+        else 0.0
+    )
+    recall = (
+        float(recall_score(y_true, y_pred, average="weighted", zero_division=0))
+        if y_true
+        else 0.0
+    )
+    matrix = (
+        confusion_matrix(y_true, y_pred, labels=labels)
+        if y_true
+        else np.zeros((0, 0), dtype=int)
+    )
     confusion = pd.DataFrame(matrix, index=labels, columns=labels)
     return ClassificationMetrics(
         accuracy=accuracy,
@@ -64,8 +85,9 @@ def compute_classification_metrics(y_true: list[str], y_pred: list[str]) -> Clas
     )
 
 
-
-def evaluate_feedback_classification(df: pd.DataFrame, analyzer: FeedbackAnalyzer, max_rows: int | None = 600) -> dict[str, ClassificationMetrics]:
+def evaluate_feedback_classification(
+    df: pd.DataFrame, analyzer: FeedbackAnalyzer, max_rows: int | None = 600
+) -> dict[str, ClassificationMetrics]:
     frame = df.copy()
     if frame.empty:
         empty = compute_classification_metrics([], [])
@@ -79,14 +101,26 @@ def evaluate_feedback_classification(df: pd.DataFrame, analyzer: FeedbackAnalyze
     predicted_severity = [result.severity for result in predictions]
     predicted_actionable = [bool(result.actionable) for result in predictions]
 
-    issue_metrics = compute_classification_metrics(frame["issue_category"].astype(str).tolist(), predicted_issue)
-    severity_metrics = compute_classification_metrics(frame["severity"].astype(str).tolist(), predicted_severity)
-    action_metrics = compute_classification_metrics(frame["actionable"].astype(bool).astype(str).tolist(), [str(value) for value in predicted_actionable])
-    return {"issue_type": issue_metrics, "severity": severity_metrics, "actionability": action_metrics}
+    issue_metrics = compute_classification_metrics(
+        frame["issue_category"].astype(str).tolist(), predicted_issue
+    )
+    severity_metrics = compute_classification_metrics(
+        frame["severity"].astype(str).tolist(), predicted_severity
+    )
+    action_metrics = compute_classification_metrics(
+        frame["actionable"].astype(bool).astype(str).tolist(),
+        [str(value) for value in predicted_actionable],
+    )
+    return {
+        "issue_type": issue_metrics,
+        "severity": severity_metrics,
+        "actionability": action_metrics,
+    }
 
 
-
-def evaluate_emerging_detection(df: pd.DataFrame, alerts_df: pd.DataFrame | None = None) -> dict[str, Any]:
+def evaluate_emerging_detection(
+    df: pd.DataFrame, alerts_df: pd.DataFrame | None = None
+) -> dict[str, Any]:
     frame = df.copy()
     frame["timestamp"] = pd.to_datetime(frame["timestamp"], errors="coerce")
     frame = frame.loc[~frame["timestamp"].isna()].copy()
@@ -102,8 +136,13 @@ def evaluate_emerging_detection(df: pd.DataFrame, alerts_df: pd.DataFrame | None
         store_id = incident["store_id"]
         category = incident["issue_category"]
         start_date = pd.Timestamp(incident["incident_start_date"])
-        matching_alerts = alerts_df[(alerts_df["store_id"] == store_id) & (alerts_df["issue_category"] == category)]
-        matching_alerts = matching_alerts[pd.to_datetime(matching_alerts["alert_date"]) >= start_date]
+        matching_alerts = alerts_df[
+            (alerts_df["store_id"] == store_id)
+            & (alerts_df["issue_category"] == category)
+        ]
+        matching_alerts = matching_alerts[
+            pd.to_datetime(matching_alerts["alert_date"]) >= start_date
+        ]
         if not matching_alerts.empty:
             first_alert = pd.to_datetime(matching_alerts["alert_date"]).min()
             detected_incidents += 1
@@ -113,28 +152,36 @@ def evaluate_emerging_detection(df: pd.DataFrame, alerts_df: pd.DataFrame | None
     false_alerts = 0
     for _, alert in alerts_df.iterrows():
         key = (alert["store_id"], alert["issue_category"])
-        if key not in {(row.store_id, row.issue_category) for row in incident_profiles.itertuples(index=False)}:
-            false_alerts += 1
-        elif key not in matched_alerts:
+        if key not in {
+            (row.store_id, row.issue_category)
+            for row in incident_profiles.itertuples(index=False)
+        } or key not in matched_alerts:
             false_alerts += 1
 
     total_escalations = len(alerts_df)
-    true_actionable_escalations = int(alerts_df[alerts_df["severity"].astype(str).str.upper() == "HIGH"].shape[0])
+    true_actionable_escalations = int(
+        alerts_df[alerts_df["severity"].astype(str).str.upper() == "HIGH"].shape[0]
+    )
     escalation_precision = None
     if total_escalations > 0:
         escalation_precision = true_actionable_escalations / total_escalations
 
     return {
         "true_incidents_detected": detected_incidents,
-        "total_known_incidents": int(len(incident_profiles)),
-        "median_detection_lead_time_days": float(np.median(lead_times)) if lead_times else None,
-        "mean_detection_lead_time_days": float(np.mean(lead_times)) if lead_times else None,
+        "total_known_incidents": len(incident_profiles),
+        "median_detection_lead_time_days": float(np.median(lead_times))
+        if lead_times
+        else None,
+        "mean_detection_lead_time_days": float(np.mean(lead_times))
+        if lead_times
+        else None,
         "false_alert_count": false_alerts,
         "total_alerts": total_escalations,
         "escalation_precision": escalation_precision,
-        "note": "Demonstration-only evaluation using seeded synthetic incidents." if not alerts_df.empty else "No alerts generated.",
+        "note": "Demonstration-only evaluation using seeded synthetic incidents."
+        if not alerts_df.empty
+        else "No alerts generated.",
     }
-
 
 
 def model_insights_summary(analyzer: FeedbackAnalyzer) -> dict[str, Any]:

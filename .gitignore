@@ -38,10 +38,10 @@ env/
 Thumbs.db
 
 # Project specific - Data & Cache
-data/*.sqlite
-data/*.db
-data/storepulse_report_*.csv
-data/storepulse_report_*.pdf
+data/
+*.sqlite
+*.db
+r5_feedback_talentap.csv
 *.log
 *.tmp
 *.bak

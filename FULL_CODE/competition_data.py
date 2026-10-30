@@ -1,7 +1,9 @@
 """Load and prepare competition dataset for dashboard"""
+
 from __future__ import annotations
 
 from pathlib import Path
+
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,63 +26,69 @@ def load_competition_dataset() -> pd.DataFrame:
     labels = pd.read_csv(LABELS_PATH)
 
     # Merge labels with feedback
-    df = feedback.merge(labels, on='feedback_id', how='left')
+    df = feedback.merge(labels, on="feedback_id", how="left")
 
     # Load store master and merge safely
     stores = pd.read_csv(STORE_MASTER_PATH)
-    merge_cols = ['store_id']
-    if 'region' in stores.columns:
-        merge_cols.append('region')
-    if 'size_sqft' in stores.columns:
-        merge_cols.append('size_sqft')
+    merge_cols = ["store_id"]
+    if "region" in stores.columns:
+        merge_cols.append("region")
+    if "size_sqft" in stores.columns:
+        merge_cols.append("size_sqft")
 
-    df = df.merge(stores[merge_cols], on='store_id', how='left', suffixes=('', '_store'))
+    df = df.merge(
+        stores[merge_cols], on="store_id", how="left", suffixes=("", "_store")
+    )
 
     # Rename size_sqft to store_size if present
-    if 'size_sqft' in df.columns:
-        df = df.rename(columns={'size_sqft': 'store_size'})
+    if "size_sqft" in df.columns:
+        df = df.rename(columns={"size_sqft": "store_size"})
 
     # Load week calendar
     weeks = pd.read_csv(WEEK_CALENDAR_PATH)
 
     # Parse timestamps
-    df['timestamp'] = pd.to_datetime(df['created_at'])
-    df['date'] = df['timestamp'].dt.date
+    df["timestamp"] = pd.to_datetime(df["created_at"])
+    df["date"] = df["timestamp"].dt.date
 
     # Map to week_start using week_calendar
-    weeks['week_start'] = pd.to_datetime(weeks['week_start'])
-    weeks['week_end'] = pd.to_datetime(weeks['week_end'])
+    weeks["week_start"] = pd.to_datetime(weeks["week_start"])
+    weeks["week_end"] = pd.to_datetime(weeks["week_end"])
 
     def find_week_start(date):
         if pd.isna(date):
             return None
         for _, row in weeks.iterrows():
-            if row['week_start'].date() <= date <= row['week_end'].date():
-                return row['week_start']
+            if row["week_start"].date() <= date <= row["week_end"].date():
+                return row["week_start"]
         return None
 
-    df['week_start'] = df['date'].apply(find_week_start)
+    df["week_start"] = df["date"].apply(find_week_start)
 
     # Rename columns to match dashboard expectations
-    df = df.rename(columns={
-        'text': 'feedback_text',
-        'issue_type_id': 'issue_category',
-    })
+    df = df.rename(
+        columns={
+            "text": "feedback_text",
+            "issue_type_id": "issue_category",
+        }
+    )
 
     # Add required columns for dashboard
-    df['department'] = 'Operations'
-    df['dataset_mode'] = 'train'
-    df['incident_tag'] = None
-    df['known_incident_flag'] = False
-    df['language_hint'] = 'multilingual'
-    df['feedback_text_normalized'] = df['feedback_text'].fillna('')
+    df["department"] = "Operations"
+    df["dataset_mode"] = "train"
+    df["incident_tag"] = None
+    df["known_incident_flag"] = False
+    df["language_hint"] = "multilingual"
+    df["feedback_text_normalized"] = df["feedback_text"].fillna("")
 
     # Convert actionable to boolean
-    df['actionable'] = df['actionable'].fillna(0).astype(bool)
+    df["actionable"] = df["actionable"].fillna(0).astype(bool)
 
     # Store-week ID
-    df['store_week_id'] = df['store_id'].astype(str) + '_' + df['week_start'].astype(str)
-    df['week_label'] = df['week_start'].dt.strftime('%Y-W%U')
+    df["store_week_id"] = (
+        df["store_id"].astype(str) + "_" + df["week_start"].astype(str)
+    )
+    df["week_label"] = df["week_start"].dt.strftime("%Y-W%U")
 
     return df
 
@@ -93,43 +101,45 @@ def load_competition_for_r5_generation() -> pd.DataFrame:
     labels = pd.read_csv(LABELS_PATH)
 
     # Merge
-    df = feedback.merge(labels, on='feedback_id', how='left')
+    df = feedback.merge(labels, on="feedback_id", how="left")
 
     # Load stores and merge safely
     stores = pd.read_csv(STORE_MASTER_PATH)
-    merge_cols = ['store_id']
-    if 'region' in stores.columns:
-        merge_cols.append('region')
-    if 'size_sqft' in stores.columns:
-        merge_cols.append('size_sqft')
+    merge_cols = ["store_id"]
+    if "region" in stores.columns:
+        merge_cols.append("region")
+    if "size_sqft" in stores.columns:
+        merge_cols.append("size_sqft")
 
-    df = df.merge(stores[merge_cols], on='store_id', how='left', suffixes=('', '_store'))
+    df = df.merge(
+        stores[merge_cols], on="store_id", how="left", suffixes=("", "_store")
+    )
 
     # Rename size_sqft to store_size if present
-    if 'size_sqft' in df.columns:
-        df = df.rename(columns={'size_sqft': 'store_size'})
+    if "size_sqft" in df.columns:
+        df = df.rename(columns={"size_sqft": "store_size"})
 
     # Load weeks
     weeks = pd.read_csv(WEEK_CALENDAR_PATH)
-    weeks['week_start'] = pd.to_datetime(weeks['week_start'])
-    weeks['week_end'] = pd.to_datetime(weeks['week_end'])
+    weeks["week_start"] = pd.to_datetime(weeks["week_start"])
+    weeks["week_end"] = pd.to_datetime(weeks["week_end"])
 
     # Parse timestamp
-    df['timestamp'] = pd.to_datetime(df['created_at'])
-    df['date'] = df['timestamp'].dt.date
+    df["timestamp"] = pd.to_datetime(df["created_at"])
+    df["date"] = df["timestamp"].dt.date
 
     # Map to week_start
     def find_week_start(date):
         if pd.isna(date):
             return None
         for _, row in weeks.iterrows():
-            if row['week_start'].date() <= date <= row['week_end'].date():
-                return row['week_start']
+            if row["week_start"].date() <= date <= row["week_end"].date():
+                return row["week_start"]
         return None
 
-    df['week_start'] = df['date'].apply(find_week_start)
+    df["week_start"] = df["date"].apply(find_week_start)
 
     # Keep only labeled samples with valid week_start
-    df = df[df['issue_type_id'].notna() & df['week_start'].notna()].copy()
+    df = df[df["issue_type_id"].notna() & df["week_start"].notna()].copy()
 
     return df

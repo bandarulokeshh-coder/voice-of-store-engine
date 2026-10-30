@@ -1,6 +1,0 @@
-Region,Reporting Week,Issue Type,Severity,Trend,Affected Stores,Owning Department,Complaints,Normalized Rate,Priority Score,Suggested Action,Evidence Quotes
-Bengaluru,2026-08-11,Food Contamination,HIGH,↑ 3.00x,2,Store Operations,2,0.1548,90.57,Quarantine the product and initiate a food safety review.,"['Staff were polite and quick to assist.', 'Staff were polite and quick to assist.']"
-Bengaluru,2026-08-11,Refrigeration Failure,HIGH,↑ 1.50x,2,Store Operations,2,0.1548,90.57,Inspect refrigeration equipment and isolate affected products.,"['Fridge temperature is too high; the cold section is warm.', 'Cold storage work aagala, goods spoil aaguthu.']"
-Bengaluru,2026-08-11,Hygiene,HIGH,↑ 3.00x,2,Store Operations,2,0.1548,90.57,Trigger sanitation cleanup and perform a store inspection.,"['Store lo cleanliness ledu, smell vastondi.', 'The washroom and aisle are dirty and smell bad.']"
-Bengaluru,2026-08-11,Staff Misconduct,HIGH,→ 1.00x,1,HR,1,0.1667,87.0,Escalate to HR and conduct an incident review.,['Staff member ne inappropriate behavior kiya.']
-Bengaluru,2026-08-11,Checkout Delay,MEDIUM,↑ 1.33x,3,Store Operations,3,0.2143,82.71,Add checkout support and monitor peak-hour staffing.,"['Checkout lines are too long during evening peak hours.', 'Checkout lines are too long during evening peak hours.', 'Checkout lines are too long during evening peak hours.']"

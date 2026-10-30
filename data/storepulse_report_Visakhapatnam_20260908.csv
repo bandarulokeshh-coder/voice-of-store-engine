@@ -1,6 +1,0 @@
-Region,Reporting Week,Issue Type,Severity,Trend,Affected Stores,Owning Department,Complaints,Normalized Rate,Priority Score,Suggested Action,Evidence Quotes
-Visakhapatnam,2026-09-08,Refrigeration Failure,HIGH,→ 1.00x,1,Store Operations,1,0.25,97.0,Inspect refrigeration equipment and isolate affected products.,"['Freezer pani cheyatledu, milk packets spoil avtunnayi.']"
-Visakhapatnam,2026-09-08,Food Contamination,HIGH,↑ 2.00x,1,Store Operations,1,0.2,96.0,Quarantine the product and initiate a food safety review.,['Staff were polite and quick to assist.']
-Visakhapatnam,2026-09-08,Harassment,HIGH,↑ 2.00x,1,HR,1,0.125,87.0,Open a confidential HR escalation immediately.,['Staff were polite and quick to assist.']
-Visakhapatnam,2026-09-08,Hygiene,HIGH,→ 1.00x,3,Store Operations,3,0.1417,84.0,Trigger sanitation cleanup and perform a store inspection.,"['Washroom chala dirty ga undi, spill clean cheyatledu.', 'Store bahut dirty hai, smell aa rahi hai aur cleaning nahi hui.', 'Hygiene is poor; spills were not cleaned on time.']"
-Visakhapatnam,2026-09-08,Store Cleanliness,MEDIUM,↑ 3.50x,3,Store Operations,6,0.225,84.0,Schedule cleanup and verify sanitation standards.,"['Store floor dirty ga undi.', 'Store floor dirty ga undi.', 'The store floor is dirty and trash is visible near the entrance.']"
