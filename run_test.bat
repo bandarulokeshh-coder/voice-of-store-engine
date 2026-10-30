@@ -1,0 +1,2 @@
+@echo off
+python -c "import sys; sys.path.insert(0, r'C:\Users\lokes\TALENTAP'); import pandas as pd; from src.competition_data import load_competition_dataset; df = load_competition_dataset(); print('Shape:', df.shape); print('Columns:', df.columns.tolist()); print('First 10 rows:'); print(df.head(10))"

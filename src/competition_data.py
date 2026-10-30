@@ -20,20 +20,25 @@ def load_competition_dataset() -> pd.DataFrame:
     # Load feedback
     feedback = pd.read_csv(FEEDBACK_PATH)
 
-    # Load labels (only ~3000 labeled samples)
+    # Load labels
     labels = pd.read_csv(LABELS_PATH)
 
     # Merge labels with feedback
     df = feedback.merge(labels, on='feedback_id', how='left')
 
-    # Load store master for region info
+    # Load store master and merge safely
     stores = pd.read_csv(STORE_MASTER_PATH)
-    # Select only available columns
-    store_cols = [col for col in ['store_id', 'region', 'size_sqft'] if col in stores.columns]
-    df = df.merge(stores[store_cols], on='store_id', how='left')
-    # Rename size_sqft to store_size if it exists
+    merge_cols = ['store_id']
+    if 'region' in stores.columns:
+        merge_cols.append('region')
+    if 'size_sqft' in stores.columns:
+        merge_cols.append('size_sqft')
+
+    df = df.merge(stores[merge_cols], on='store_id', how='left', suffixes=('', '_store'))
+
+    # Rename size_sqft to store_size if present
     if 'size_sqft' in df.columns:
-        df.rename(columns={'size_sqft': 'store_size'}, inplace=True)
+        df = df.rename(columns={'size_sqft': 'store_size'})
 
     # Load week calendar
     weeks = pd.read_csv(WEEK_CALENDAR_PATH)
@@ -63,7 +68,7 @@ def load_competition_dataset() -> pd.DataFrame:
     })
 
     # Add required columns for dashboard
-    df['department'] = 'Operations'  # Default, can be enriched
+    df['department'] = 'Operations'
     df['dataset_mode'] = 'train'
     df['incident_tag'] = None
     df['known_incident_flag'] = False
@@ -90,14 +95,19 @@ def load_competition_for_r5_generation() -> pd.DataFrame:
     # Merge
     df = feedback.merge(labels, on='feedback_id', how='left')
 
-    # Load stores
+    # Load stores and merge safely
     stores = pd.read_csv(STORE_MASTER_PATH)
-    # Select only available columns
-    store_cols = [col for col in ['store_id', 'region', 'size_sqft'] if col in stores.columns]
-    df = df.merge(stores[store_cols], on='store_id', how='left')
-    # Rename size_sqft to store_size if it exists
+    merge_cols = ['store_id']
+    if 'region' in stores.columns:
+        merge_cols.append('region')
+    if 'size_sqft' in stores.columns:
+        merge_cols.append('size_sqft')
+
+    df = df.merge(stores[merge_cols], on='store_id', how='left', suffixes=('', '_store'))
+
+    # Rename size_sqft to store_size if present
     if 'size_sqft' in df.columns:
-        df.rename(columns={'size_sqft': 'store_size'}, inplace=True)
+        df = df.rename(columns={'size_sqft': 'store_size'})
 
     # Load weeks
     weeks = pd.read_csv(WEEK_CALENDAR_PATH)
