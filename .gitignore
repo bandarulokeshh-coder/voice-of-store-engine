@@ -37,10 +37,19 @@ env/
 .DS_Store
 Thumbs.db
 
-# Project specific
+# Project specific - Data & Cache
+data/*.sqlite
+data/*.db
+data/storepulse_report_*.csv
+data/storepulse_report_*.pdf
 *.log
-*.sqlite
-*.db
+*.tmp
+*.bak
+*.output
+gen_output.txt
+run.sh
+run_gen.py
+wrapper.py
 
 # Node modules (if any Next.js components)
 node_modules/
@@ -51,15 +60,11 @@ out/
 .env
 .env.local
 
-# Temporary files
-*.tmp
-*.bak
-*.output
-gen_output.txt
-run.sh
-run_gen.py
-wrapper.py
-
 # Claude Code
 .claude/
 .agents/
+
+# Ignore submission artifacts (not source code)
+FULL_CODE/submission/R5_predictions.csv
+FULL_CODE/submission/R5_emerging_flags.csv
+FULL_CODE/submission/*.json
