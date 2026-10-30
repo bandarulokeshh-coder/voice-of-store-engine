@@ -28,8 +28,12 @@ def load_competition_dataset() -> pd.DataFrame:
 
     # Load store master for region info
     stores = pd.read_csv(STORE_MASTER_PATH)
-    df = df.merge(stores[['store_id', 'region', 'size_sqft']], on='store_id', how='left')
-    df.rename(columns={'size_sqft': 'store_size'}, inplace=True)
+    # Select only available columns
+    store_cols = [col for col in ['store_id', 'region', 'size_sqft'] if col in stores.columns]
+    df = df.merge(stores[store_cols], on='store_id', how='left')
+    # Rename size_sqft to store_size if it exists
+    if 'size_sqft' in df.columns:
+        df.rename(columns={'size_sqft': 'store_size'}, inplace=True)
 
     # Load week calendar
     weeks = pd.read_csv(WEEK_CALENDAR_PATH)
@@ -88,8 +92,12 @@ def load_competition_for_r5_generation() -> pd.DataFrame:
 
     # Load stores
     stores = pd.read_csv(STORE_MASTER_PATH)
-    df = df.merge(stores[['store_id', 'region', 'size_sqft']], on='store_id', how='left')
-    df.rename(columns={'size_sqft': 'store_size'}, inplace=True)
+    # Select only available columns
+    store_cols = [col for col in ['store_id', 'region', 'size_sqft'] if col in stores.columns]
+    df = df.merge(stores[store_cols], on='store_id', how='left')
+    # Rename size_sqft to store_size if it exists
+    if 'size_sqft' in df.columns:
+        df.rename(columns={'size_sqft': 'store_size'}, inplace=True)
 
     # Load weeks
     weeks = pd.read_csv(WEEK_CALENDAR_PATH)
