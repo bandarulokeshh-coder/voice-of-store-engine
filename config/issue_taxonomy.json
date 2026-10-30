@@ -1,0 +1,231 @@
+{
+  "version": "1.0",
+  "updated": "2026-10-12",
+  "categories": [
+    {
+      "issue_category": "Refrigeration Failure",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["freezer", "fridge", "refrigerator", "cooling", "temperature", "thanda", "warms", "spoil", "ice cream melted"],
+      "suggested_action": "Inspect refrigeration equipment and isolate affected products."
+    },
+    {
+      "issue_category": "Equipment Failure",
+      "department": "Store Operations",
+      "severity_default": "MEDIUM",
+      "keywords": ["machine", "broken", "not working", "work avvatledu", "kaput", "scanner", "pos", "printer", "escalator"],
+      "suggested_action": "Dispatch maintenance and verify store equipment status."
+    },
+    {
+      "issue_category": "Hygiene",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["dirty", "smell", "unclean", "hygiene", "pani", "garbage", "cockroach", "spill", "washroom", "toilet"],
+      "suggested_action": "Trigger sanitation cleanup and perform a store inspection."
+    },
+    {
+      "issue_category": "Food Contamination",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["contamination", "mold", "fungus", "contaminated", "smell bad", "expired taste", "spoiled", "stale"],
+      "suggested_action": "Quarantine the product and initiate a food safety review."
+    },
+    {
+      "issue_category": "Allergen Label Error",
+      "department": "Merchandising",
+      "severity_default": "HIGH",
+      "keywords": ["allergen", "allergy", "label wrong", "ingredient mismatch", "contains nuts", "gluten", "milk", "egg", "pack label"],
+      "suggested_action": "Pull affected labels and verify packaging compliance."
+    },
+    {
+      "issue_category": "Unsafe Product",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["unsafe", "dangerous", "hazard", "sharp", "broken bottle", "electrical", "shock", "slip"],
+      "suggested_action": "Remove hazardous stock and secure the affected area."
+    },
+    {
+      "issue_category": "Stock Shortage",
+      "department": "Supply Chain",
+      "severity_default": "MEDIUM",
+      "keywords": ["out of stock", "stock shortage", "empty shelf", "no stock", "ned", "availability", "unavailable"],
+      "suggested_action": "Review replenishment and update supply chain allocation."
+    },
+    {
+      "issue_category": "Delivery Delay",
+      "department": "Supply Chain",
+      "severity_default": "MEDIUM",
+      "keywords": ["late delivery", "delay", "not arrived", "delivery stuck", "truck late", "transport delay"],
+      "suggested_action": "Contact logistics partner and revise delivery ETA."
+    },
+    {
+      "issue_category": "Inventory Mismatch",
+      "department": "Supply Chain",
+      "severity_default": "MEDIUM",
+      "keywords": ["inventory mismatch", "counts wrong", "system stock", "physical stock", "barcode mismatch"],
+      "suggested_action": "Reconcile inventory counts and investigate shrinkage."
+    },
+    {
+      "issue_category": "Packaging Damage",
+      "department": "Supply Chain",
+      "severity_default": "MEDIUM",
+      "keywords": ["damaged pack", "broken pack", "packaging", "torn", "leaking", "crushed"],
+      "suggested_action": "Isolate damaged stock and inform the vendor."
+    },
+    {
+      "issue_category": "Incorrect Price Label",
+      "department": "Merchandising",
+      "severity_default": "MEDIUM",
+      "keywords": ["wrong price", "price tag", "mrp", "label mismatch", "incorrect price", "overcharged"],
+      "suggested_action": "Audit shelf labels and correct the price display."
+    },
+    {
+      "issue_category": "Promotion Mismatch",
+      "department": "Merchandising",
+      "severity_default": "MEDIUM",
+      "keywords": ["offer not applied", "promo", "coupon", "discount missing", "promotion mismatch"],
+      "suggested_action": "Align promotional signage and POS pricing rules."
+    },
+    {
+      "issue_category": "Assortment Gap",
+      "department": "Merchandising",
+      "severity_default": "LOW",
+      "keywords": ["missing variety", "assortment", "no options", "limited selection"],
+      "suggested_action": "Review planogram and assortment planning."
+    },
+    {
+      "issue_category": "Freshness Concern",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["not fresh", "stale", "rotten", "smell", "freshness", "spoiled vegetables"],
+      "suggested_action": "Check freshness rotation and remove at-risk items."
+    },
+    {
+      "issue_category": "Billing Issue",
+      "department": "Digital",
+      "severity_default": "MEDIUM",
+      "keywords": ["bill wrong", "invoice", "charged twice", "receipt", "billing issue"],
+      "suggested_action": "Review invoice generation and payment reconciliation."
+    },
+    {
+      "issue_category": "App Payment Failure",
+      "department": "Digital",
+      "severity_default": "HIGH",
+      "keywords": ["payment failed", "upi failed", "app payment", "checkout failed", "transaction declined"],
+      "suggested_action": "Inspect payment gateway logs and app checkout flow."
+    },
+    {
+      "issue_category": "App Login Failure",
+      "department": "Digital",
+      "severity_default": "MEDIUM",
+      "keywords": ["login failed", "cannot sign in", "otp not coming", "app crash", "app issue"],
+      "suggested_action": "Verify app authentication services and user session handling."
+    },
+    {
+      "issue_category": "Order Cancellation",
+      "department": "Digital",
+      "severity_default": "MEDIUM",
+      "keywords": ["order canceled", "cancelled", "refund", "app order", "delivery app"],
+      "suggested_action": "Review digital order workflow and cancellation reasons."
+    },
+    {
+      "issue_category": "Checkout Delay",
+      "department": "Store Operations",
+      "severity_default": "MEDIUM",
+      "keywords": ["queue", "slow checkout", "billing queue", "long line", "crowded"],
+      "suggested_action": "Add checkout support and monitor peak-hour staffing."
+    },
+    {
+      "issue_category": "Queue Management",
+      "department": "Store Operations",
+      "severity_default": "LOW",
+      "keywords": ["queue management", "line management", "queue", "waiting"],
+      "suggested_action": "Adjust cashier deployment and customer flow."
+    },
+    {
+      "issue_category": "Staff Misconduct",
+      "department": "HR",
+      "severity_default": "HIGH",
+      "keywords": ["misconduct", "inappropriate", "harassment", "rude staff", "abuse", "threatened"],
+      "suggested_action": "Escalate to HR and conduct an incident review."
+    },
+    {
+      "issue_category": "Harassment",
+      "department": "HR",
+      "severity_default": "HIGH",
+      "keywords": ["harassment", "touching", "followed me", "unsafe behaviour", "staff harassment"],
+      "suggested_action": "Open a confidential HR escalation immediately."
+    },
+    {
+      "issue_category": "Staff Courtesy",
+      "department": "HR",
+      "severity_default": "LOW",
+      "keywords": ["rude", "uncourteous", "not polite", "bad attitude"],
+      "suggested_action": "Coach staff and review service etiquette."
+    },
+    {
+      "issue_category": "Security Concern",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["theft", "security", "unsafe area", "fight", "weapon", "crowd control"],
+      "suggested_action": "Review security footage and alert store leadership."
+    },
+    {
+      "issue_category": "Parking Issue",
+      "department": "Store Operations",
+      "severity_default": "LOW",
+      "keywords": ["parking", "vehicle", "lot", "entrance blocked"],
+      "suggested_action": "Coordinate with store facilities to improve access flow."
+    },
+    {
+      "issue_category": "Product Damage",
+      "department": "Supply Chain",
+      "severity_default": "MEDIUM",
+      "keywords": ["damaged product", "broken item", "cracked", "leak", "product damaged"],
+      "suggested_action": "Trace damage source and review handling practices."
+    },
+    {
+      "issue_category": "Return Issue",
+      "department": "Digital",
+      "severity_default": "MEDIUM",
+      "keywords": ["return rejected", "refund pending", "return problem", "exchange"],
+      "suggested_action": "Audit return approvals and customer support workflow."
+    },
+    {
+      "issue_category": "Shelf Tag Missing",
+      "department": "Merchandising",
+      "severity_default": "LOW",
+      "keywords": ["no shelf tag", "missing tag", "label missing", "price tag absent"],
+      "suggested_action": "Refresh shelf labeling and audit merchandising compliance."
+    },
+    {
+      "issue_category": "Lighting Failure",
+      "department": "Store Operations",
+      "severity_default": "LOW",
+      "keywords": ["lights off", "dark", "lighting", "bulb", "power issue"],
+      "suggested_action": "Repair lighting and inspect electrical systems."
+    },
+    {
+      "issue_category": "Store Cleanliness",
+      "department": "Store Operations",
+      "severity_default": "HIGH",
+      "keywords": ["messy", "dirty floor", "trash", "cleaning", "sanitation"],
+      "suggested_action": "Schedule cleanup and verify sanitation standards."
+    },
+    {
+      "issue_category": "Fresh Produce Quality",
+      "department": "Supply Chain",
+      "severity_default": "MEDIUM",
+      "keywords": ["vegetable rotten", "fruit bad", "produce", "fresh produce", "soft bananas"],
+      "suggested_action": "Review fresh produce sourcing and shelf rotation."
+    },
+    {
+      "issue_category": "Customer Service Delay",
+      "department": "Store Operations",
+      "severity_default": "LOW",
+      "keywords": ["no response", "waiting for help", "staff unavailable", "service delay"],
+      "suggested_action": "Improve floor support and customer assistance staffing."
+    }
+  ],
+  "default_department": "Store Operations"
+}

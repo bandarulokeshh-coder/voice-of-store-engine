@@ -1,0 +1,6 @@
+Region,Reporting Week,Issue Type,Severity,Trend,Affected Stores,Owning Department,Complaints,Normalized Rate,Priority Score,Suggested Action,Evidence Quotes
+Bengaluru,2026-07-21,Allergen Label Error,HIGH,↑ 2.00x,1,Merchandising,1,0.5,100.0,Pull affected labels and verify packaging compliance.,['Incorrect allergen information printed on the food packet.']
+Bengaluru,2026-07-21,Hygiene,HIGH,↑ 3.00x,2,Store Operations,2,0.75,100.0,Trigger sanitation cleanup and perform a store inspection.,"['The washroom and aisle are dirty and smell bad.', 'Washroom ani floor var safai nahi zali.']"
+Bengaluru,2026-07-21,Incorrect Price Label,MEDIUM,↑ 2.00x,1,Merchandising,1,1.0,92.0,Audit shelf labels and correct the price display.,['Price tag chukicha aahe.']
+Bengaluru,2026-07-21,Equipment Failure,LOW,↑ 2.00x,1,Store Operations,1,1.0,65.0,Dispatch maintenance and verify store equipment status.,"['Thanks, the store was clean and well organized.']"
+Bengaluru,2026-07-21,Customer Service Delay,LOW,↑ 2.00x,1,Store Operations,1,0.5,65.0,Improve floor support and customer assistance staffing.,['Staff were polite and quick to assist.']

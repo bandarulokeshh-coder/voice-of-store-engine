@@ -1,0 +1,1 @@
+python -c "import pandas as pd; df = pd.read_csv('feedback.csv'); print(df.describe())"
